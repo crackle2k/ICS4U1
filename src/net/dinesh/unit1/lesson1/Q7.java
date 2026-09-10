@@ -1,3 +1,9 @@
+/*
+Author: Dinesh Sinnathamby
+Date: September 9th, 2026
+Description: Short program with terminal art featuring a diamond made out of asterisks.
+*/
+
 package net.dinesh.unit1.lesson1;
 
 public class Q7 {
