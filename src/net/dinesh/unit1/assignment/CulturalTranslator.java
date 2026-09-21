@@ -9,7 +9,16 @@ package net.dinesh.unit1.assignment;
 import java.util.Scanner;
 
 public class CulturalTranslator {
+    /*
+    Purpose: Provides detailed translations and descriptions for various Ojibwe terms and common sayings.
+    */
+
     public static void main(String[] args) {
+        /*
+        Purpose: Starts up the cultural translator and allows the user to start translating terms.
+        Parameters: Only command line arguments are passed in, which are not used.
+        Return Value: None.
+        */
 
         Scanner input = new Scanner(System.in);
         char playAgain;
@@ -26,8 +35,8 @@ public class CulturalTranslator {
             String selection = input.nextLine();
             translate(selection);
 
-            System.out.println("Would you like to use the calculator again?");
-            playAgain = input.next().toLowerCase().charAt(0);
+            System.out.println("Would you like to use the translator again? (Y/N)");
+            playAgain = input.nextLine().toLowerCase().charAt(0);
 
         } while (playAgain == 'y');
 
@@ -36,24 +45,29 @@ public class CulturalTranslator {
     }
 
     public static void translate(String selection) {
+        /*
+        Purpose: Translates an Ojibwe term based on the user's selection.
+        Parameters: selection (The user's selected choice).
+        Return Value: None.
+        */
 
-        if (selection == "1") {
+        if (selection.equals("1")) {
             System.out.println("Ojibwe Term: Aaniin");
             System.out.println("English Translation: Hello / I see your light");
             System.out.println("Acknowledges the spiritual presence or light within another person.");
-        } else if (selection == "2") {
+        } else if (selection.equals("2")) {
             System.out.println("Ojibwe Term: Miigwech");
             System.out.println("English Translation: Thank you");
             System.out.println("Expresses deep gratitude and respect toward community members or nature.");
-        } else if (selection == "3") {
+        } else if (selection.equals("3")) {
             System.out.println("Ojibwe Term: Akinoomaage");
             System.out.println("English Translation: To teach / To point towards the earth");
             System.out.println("Reflects the worldview that true learning comes from observing the Earth.");
-        } else if (selection == "4") {
+        } else if (selection.equals("4")) {
             System.out.println("Ojibwe Term: Mino-bimaadiziwin");
             System.out.println("English Translation: The good life");
             System.out.println("A central philosophy of living in balance, health, and harmony with all creation.");
-        } else if (selection == "5") {
+        } else if (selection.equals("5")) {
             System.out.println("Ojibwe Term: Gichi-apiitendaagozi");
             System.out.println("English Translation: They are of great value");
             System.out.println("Denotes deep respect for Elders and their irreplaceable wisdom.");
