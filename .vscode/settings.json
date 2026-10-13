@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": [],
+    "java.debug.settings.console": "integratedTerminal",
+    "files.exclude": {
+        "**/.project": true,
+        "**/.classpath": true,
+        "**/.settings": true,
+        "**/bin": true,
+        "out": true
+    }
+}
