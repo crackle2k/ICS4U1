@@ -1,3 +1,9 @@
+/*
+Authors: Dinesh Sinnathamby and Ethan Gopikrishna
+Date: October 16th, 2026
+Description: Drawing panel that creates random lines, rectangles, and ovals, displays them, and tracks the number of each shape.
+*/
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;

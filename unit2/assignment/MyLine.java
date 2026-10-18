@@ -1,3 +1,9 @@
+/*
+Authors: Dinesh Sinnathamby and Ethan Gopikrishna
+Date: October 16th, 2026
+Description: Line class that extends MyShape and draws a line between two points using the specified color.
+*/
+
 import java.awt.Color;
 import java.awt.Graphics;
 

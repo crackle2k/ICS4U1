@@ -1,3 +1,9 @@
+/*
+Authors: Dinesh Sinnathamby and Ethan Gopikrishna
+Date: October 16th, 2026
+Description: Main program that asks for a positive number of shapes and displays a drawing panel with the number of each shape.
+*/
+
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

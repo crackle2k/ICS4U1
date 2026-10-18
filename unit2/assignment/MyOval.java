@@ -1,3 +1,9 @@
+/*
+Authors: Dinesh Sinnathamby and Ethan Gopikrishna
+Date: October 16th, 2026
+Description: Oval class that extends MyBoundedShape and draws a filled or outlined oval using the specified bounds and color.
+*/
+
 import java.awt.Color;
 import java.awt.Graphics;
 

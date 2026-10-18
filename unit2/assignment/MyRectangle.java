@@ -1,3 +1,9 @@
+/*
+Authors: Dinesh Sinnathamby and Ethan Gopikrishna
+Date: October 16th, 2026
+Description: Rectangle class that extends MyBoundedShape and draws a filled or outlined rectangle using the specified bounds and color.
+*/
+
 import java.awt.Color;
 import java.awt.Graphics;
 

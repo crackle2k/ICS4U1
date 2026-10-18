@@ -1,3 +1,9 @@
+/*
+Authors: Dinesh Sinnathamby and Ethan Gopikrishna
+Date: October 16th, 2026
+Description: Abstract class that extends MyShape, providing fill settings and bounding dimensions for shapes like rectangles and ovals.
+*/
+
 import java.awt.Color;
 
 public abstract class MyBoundedShape extends MyShape {
