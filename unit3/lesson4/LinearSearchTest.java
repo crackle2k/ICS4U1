@@ -1,0 +1,33 @@
+/*
+Author: Dinesh Sinnathamby
+Date: October 26th, 2026
+Description: Tests a recursive linear search using integers entered by the user.
+*/
+
+import java.util.Scanner;
+
+public class LinearSearchTest {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        LinearArray searchArray = new LinearArray(10);
+        System.out.println(searchArray);
+
+        System.out.print("Please enter an integer value (-1 to quit): ");
+        int searchInt = input.nextInt();
+
+        while (searchInt != -1) {
+            int position = searchArray.recursiveLinearSearch(searchInt, 0);
+
+            if (position == -1) {
+                System.out.println("The integer " + searchInt + " was not found.\n");
+            } else {
+                System.out.println("The integer " + searchInt + " was found in position " + position + ".\n");
+            }
+
+            System.out.print("Please enter an integer value (-1 to quit): ");
+            searchInt = input.nextInt();
+        }
+
+        input.close();
+    }
+}
