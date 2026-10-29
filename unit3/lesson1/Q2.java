@@ -42,7 +42,6 @@ public class Q2 {
             }
 
             sales[salesperson - 1][product - 105] += amount;
-
             System.out.printf("%-15s", "Salesperson");
 
             for (int i = 105; i <= 109; i++) {
