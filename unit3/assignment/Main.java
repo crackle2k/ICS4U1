@@ -6,31 +6,32 @@ Description: The main file to run the Treasure Hunt game, utilising the Treasure
 
 import java.util.Scanner;
 
-/*
-Runs Treasure Quest and handles difficulty selection and replay choices.
-*/
+/**
+ * Runs Treasure Quest and handles difficulty selection and replay choices.
+ */
 public class Main {
-    /*
-    Runs games until the player chooses to quit.
-    */
+    /**
+     * Runs games until the player chooses to quit.
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
         boolean playing = true;
 
         // Keep starting new games until the player chooses to quit.
         while (playing) {
-            int boardSize = chooseDifficulty(sc);
+            int boardSize = chooseDifficulty(input);
 
             TreasureHunt game = new TreasureHunt(boardSize);
-            game.startGame(sc);
+            game.startGame(input);
 
             System.out.print("\nDo you want to play again? (Y/N): ");
-            String answer = sc.nextLine().trim().toUpperCase();
+            String answer = input.nextLine().trim().toUpperCase();
 
             // Ask again until the replay choice is Y or N.
             while (!answer.equals("Y") && !answer.equals("N")) {
                 System.out.print("Invalid choice. Enter Y or N: ");
-                answer = sc.nextLine().trim().toUpperCase();
+                answer = input.nextLine().trim().toUpperCase();
             }
 
             // Stop the game loop when the player chooses N.
@@ -40,13 +41,15 @@ public class Main {
         }
 
         System.out.println("Thanks for playing Treasure Quest!");
-        sc.close();
+        input.close();
     }
 
-    /*
-    Prompts until the player selects a valid difficulty.
-    */
-    public static int chooseDifficulty(Scanner sc) {
+    /**
+     * Prompts until the player selects a valid difficulty.
+     * @param input source of player input
+     * @return the selected board size
+     */
+    public static int chooseDifficulty(Scanner input) {
         // Keep asking until a valid difficulty is selected.
         while (true) {
             System.out.println("\nWhat difficulty do you want to play?");
@@ -55,7 +58,7 @@ public class Main {
             System.out.println("[3] Hard (9x9)");
             System.out.print("Enter your choice: ");
 
-            String answer = sc.nextLine().trim();
+            String answer = input.nextLine().trim();
 
             // Use a 5 by 5 board for easy difficulty.
             if (answer.equals("1")) {
