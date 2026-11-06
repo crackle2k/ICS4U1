@@ -1,15 +1,23 @@
 /*
-Authors: Dinesh Sinnathamby
+Authors: Dinesh Sinnathamby, Roy Lu
 Date: November 3rd, 2026
 Description: The TreasureHunt class file, containing all methods, variables, and logic for the game.
 */
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Scanner;
 
-/*
-Manages the board, player rewards, mine relocation, and saved scores.
-*/
+/**
+ * Manages the board, player rewards, mine relocation, and saved scores.
+ */
 public class TreasureHunt {
 
     private char[][] board;
@@ -22,9 +30,10 @@ public class TreasureHunt {
     private long lastShuffle;
     private Random random;
 
-    /*
-    Creates a game with randomly placed hidden pieces.
-    */
+    /**
+     * Creates a game with randomly placed hidden pieces.
+     * @param boardSize number of rows and columns
+     */
     public TreasureHunt(int boardSize) {
         this.board = new char[boardSize][boardSize];
         this.checked = new boolean[boardSize][boardSize];
@@ -38,14 +47,14 @@ public class TreasureHunt {
         this.lastShuffle = System.currentTimeMillis();
     }
 
-    /*
-    Clears the board and randomly places the pieces for its difficulty.
-    */
-    public void initializeBoard() {
+    /**
+     * Clears the board and randomly places the pieces for its difficulty.
+     */
+    private void initializeBoard() {
         // Clear each row and mark all of its tiles as unrevealed.
-        for (int i = 0; i < this.board.length; i++) {
-            Arrays.fill(this.board[i], ' ');
-            Arrays.fill(this.checked[i], false);
+        for (int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
+            Arrays.fill(this.board[rowIndex], ' ');
+            Arrays.fill(this.checked[rowIndex], false);
         }
 
         int minimum = (this.board.length - 3) / 2;
@@ -58,59 +67,63 @@ public class TreasureHunt {
         placePieces('T', specials);
     }
 
-    /*
-    Places pieces in randomly selected empty cells.
-    */
-    public void placePieces(char piece, int amount) {
+    /**
+     * Places pieces in randomly selected empty cells.
+     * @param piece symbol to place
+     * @param amount number of pieces to place
+     */
+    private void placePieces(char piece, int amount) {
         int placed = 0;
 
         // Keep trying random positions until all pieces have been placed.
         while (placed < amount) {
             int row = this.random.nextInt(this.board.length);
-            int col = this.random.nextInt(this.board.length);
+            int column = this.random.nextInt(this.board.length);
 
             // Only place a piece if the chosen tile is empty.
-            if (this.board[row][col] == ' ') {
-                this.board[row][col] = piece;
+            if (this.board[row][column] == ' ') {
+                this.board[row][column] = piece;
                 placed++;
             }
         }
     }
 
-    /*
-    Displays the board with unrevealed pieces hidden.
-    */
+    /**
+     * Displays the board with unrevealed pieces hidden.
+     */
     public void displayBoard() {
         displayBoard(false, false);
     }
 
-    /*
-    Displays the labelled ASCII board with the requested visibility.
-    */
+    /**
+     * Displays the labelled ASCII board with the requested visibility.
+     * @param revealAll whether to reveal every tile
+     * @param showMines whether to show hidden mines
+     */
     private void displayBoard(boolean revealAll, boolean showMines) {
         int size = this.board.length;
 
         // Print each row of the board with its row number.
-        for (int i = 0; i < size; i++) {
+        for (int rowIndex = 0; rowIndex < size; rowIndex++) {
             System.out.print("  ");
             // Print the top border for each cell in this row.
-            for (int j = 0; j < size; j++) {
+            for (int columnIndex = 0; columnIndex < size; columnIndex++) {
                 System.out.print("+---");
             }
             System.out.println("+");
 
-            System.out.printf("%2d", i + 1);
+            System.out.printf("%2d", rowIndex + 1);
 
             // Choose and print the symbol for each cell in the row.
-            for (int j = 0; j < size; j++) {
+            for (int columnIndex = 0; columnIndex < size; columnIndex++) {
                 char symbol = ' ';
 
                 // Show the tile contents if it has been revealed or the game has ended.
-                if (revealAll || this.checked[i][j]) {
+                if (revealAll || this.checked[rowIndex][columnIndex]) {
                     // Mark an empty revealed tile with X; otherwise use its piece symbol.
-                    symbol = this.board[i][j] == ' '
-                            ? 'X' : this.board[i][j];
-                } else if (showMines && this.board[i][j] == '*') {
+                    symbol = this.board[rowIndex][columnIndex] == ' '
+                            ? 'X' : this.board[rowIndex][columnIndex];
+                } else if (showMines && this.board[rowIndex][columnIndex] == '*') {
                     // Show hidden mines while the Minesweeper power is active.
                     symbol = '*';
                 }
@@ -123,39 +136,44 @@ public class TreasureHunt {
 
         System.out.print("  ");
         // Print the bottom border across the board.
-        for (int j = 0; j < size; j++) {
+        for (int columnIndex = 0; columnIndex < size; columnIndex++) {
             System.out.print("+---");
         }
         System.out.println("+");
 
         System.out.print("   ");
         // Print the column numbers below the board.
-        for (int j = 1; j <= size; j++) {
-            System.out.printf("%-4d", j);
+        for (int columnIndex = 1; columnIndex <= size; columnIndex++) {
+            System.out.printf("%-4d", columnIndex);
         }
         System.out.println();
     }
 
-    /*
-    Checks that a tile is in bounds and has not been revealed.
-    */
-    public boolean moveIsValid(int row, int col) {
+    /**
+     * Checks that a tile is in bounds and has not been revealed.
+     * @param row selected row number
+     * @param column selected column number
+     * @return whether the selected tile can be chosen
+     */
+    private boolean moveIsValid(int row, int column) {
         // Reject row numbers outside the board.
         if (row < 1 || row > this.board.length) {
             return false;
-        } else if (col < 1 || col > this.board.length) {
+        } else if (column < 1 || column > this.board.length) {
             // Reject column numbers outside the board.
             return false;
         } else {
             // Accept the tile only if it has not been revealed.
-            return !this.checked[row - 1][col - 1];
+            return !this.checked[row - 1][column - 1];
         }
     }
 
-    /*
-    Prompts until the player enters valid coordinates.
-    */
-    public int[] getMove(Scanner input) {
+    /**
+     * Prompts until the player enters valid coordinates.
+     * @param input source of player input
+     * @return the selected row and column
+     */
+    private int[] getMove(Scanner input) {
         // Keep asking until the player enters an available tile.
         while (true) {
             System.out.print("Enter row and column: ");
@@ -171,32 +189,36 @@ public class TreasureHunt {
             // Try converting both coordinates to integers.
             try {
                 int row = Integer.parseInt(parts[0]);
-                int col = Integer.parseInt(parts[1]);
+                int column = Integer.parseInt(parts[1]);
 
                 // Return the coordinates only if the tile is available.
-                if (moveIsValid(row, col)) {
-                    return new int[]{row, col};
+                if (moveIsValid(row, column)) {
+                    return new int[]{row, column};
                 }
 
                 System.out.println("Invalid or already revealed tile.");
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException exception) {
                 // Ask again if either coordinate is not a valid integer.
                 System.out.println("Please enter valid numbers.");
             }
         }
     }
 
-    /*
-    Reveals a valid tile, counts the step, and applies its effect.
-    */
-    public boolean revealTile(int row, int col, Scanner input) {
+    /**
+     * Reveals a valid tile, counts the step, and applies its effect.
+     * @param row selected row number
+     * @param column selected column number
+     * @param input source of player input
+     * @return whether the player survives the move
+     */
+    private boolean revealTile(int row, int column, Scanner input) {
         row--;
-        col--;
+        column--;
 
-        this.checked[row][col] = true;
+        this.checked[row][column] = true;
         this.steps++;
 
-        char piece = this.board[row][col];
+        char piece = this.board[row][column];
 
         // Count the treasure when a treasure tile is revealed.
         if (piece == '$') {
@@ -226,10 +248,10 @@ public class TreasureHunt {
         return true;
     }
 
-    /*
-    Randomly awards an extra life or a saved Minesweeper power.
-    */
-    public void handleTrickOrTreat() {
+    /**
+     * Randomly awards an extra life or a saved Minesweeper power.
+     */
+    private void handleTrickOrTreat() {
         // Randomly give the player an extra life.
         if (this.random.nextBoolean()) {
             this.lives++;
@@ -241,10 +263,12 @@ public class TreasureHunt {
         }
     }
 
-    /*
-    Offers to use one saved power, accepting only Y or N.
-    */
-    public boolean useMinesweeperPower(Scanner input) {
+    /**
+     * Offers to use one saved power, accepting only Y or N.
+     * @param input source of player input
+     * @return whether mines should be shown for this turn
+     */
+    private boolean useMinesweeperPower(Scanner input) {
         // Skip the prompt if the player has no saved powers.
         if (this.powers == 0) {
             return false;
@@ -272,20 +296,20 @@ public class TreasureHunt {
         return false;
     }
 
-    /*
-    Randomly relocates hidden mines without changing revealed tiles or other pieces.
-    */
-    public void relocateMines() {
+    /**
+     * Randomly relocates hidden mines without changing revealed tiles or other pieces.
+     */
+    private void relocateMines() {
         int mines = 0;
 
         // Search each row for hidden mines.
-        for (int i = 0; i < this.board.length; i++) {
+        for (int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             // Check each tile in the current row.
-            for (int j = 0; j < this.board.length; j++) {
+            for (int columnIndex = 0; columnIndex < this.board.length; columnIndex++) {
                 // Remove and count only mines that have not been revealed.
-                if (this.board[i][j] == '*'
-                        && !this.checked[i][j]) {
-                    this.board[i][j] = ' ';
+                if (this.board[rowIndex][columnIndex] == '*'
+                        && !this.checked[rowIndex][columnIndex]) {
+                    this.board[rowIndex][columnIndex] = ' ';
                     mines++;
                 }
             }
@@ -294,13 +318,13 @@ public class TreasureHunt {
         ArrayList<int[]> available = new ArrayList<>();
 
         // Search each row for possible new mine positions.
-        for (int i = 0; i < this.board.length; i++) {
+        for (int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             // Check each tile for an available position.
-            for (int j = 0; j < this.board.length; j++) {
+            for (int columnIndex = 0; columnIndex < this.board.length; columnIndex++) {
                 // Keep only empty tiles that have not been revealed.
-                if (!this.checked[i][j]
-                        && this.board[i][j] == ' ') {
-                    available.add(new int[]{i, j});
+                if (!this.checked[rowIndex][columnIndex]
+                        && this.board[rowIndex][columnIndex] == ' ') {
+                    available.add(new int[]{rowIndex, columnIndex});
                 }
             }
         }
@@ -308,8 +332,8 @@ public class TreasureHunt {
         Collections.shuffle(available, this.random);
 
         // Place the mines at the shuffled available positions.
-        for (int i = 0; i < Math.min(mines, available.size()); i++) {
-            int[] position = available.get(i);
+        for (int rowIndex = 0; rowIndex < Math.min(mines, available.size()); rowIndex++) {
+            int[] position = available.get(rowIndex);
             this.board[position[0]][position[1]] = '*';
         }
 
@@ -317,23 +341,25 @@ public class TreasureHunt {
         System.out.println("Hidden mines have been relocated!");
     }
 
-    /*
-    Checks whether all treasures have been found.
-    */
-    public boolean checkWin() {
+    /**
+     * Checks whether all treasures have been found.
+     * @return whether all treasures have been found
+     */
+    private boolean checkWin() {
         return this.found == this.treasures;
     }
 
-    /*
-    Checks whether there are any unrevealed tiles remaining.
-    */
-    public boolean checkDraw() {
+    /**
+     * Checks whether there are any unrevealed tiles remaining.
+     * @return whether no unrevealed tiles remain
+     */
+    private boolean checkDraw() {
         // Search each row for remaining moves.
-        for (int i = 0; i < this.board.length; i++) {
+        for (int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             // Check each tile in the row.
-            for (int j = 0; j < this.board.length; j++) {
+            for (int columnIndex = 0; columnIndex < this.board.length; columnIndex++) {
                 // There is still a move available if any tile is unrevealed.
-                if (!this.checked[i][j]) {
+                if (!this.checked[rowIndex][columnIndex]) {
                     return false;
                 }
             }
@@ -342,17 +368,18 @@ public class TreasureHunt {
         return true;
     }
 
-    /*
-    Displays the final board with every piece revealed.
-    */
-    public void revealAll() {
+    /**
+     * Displays the final board with every piece revealed.
+     */
+    private void revealAll() {
         displayBoard(true, false);
     }
 
-    /*
-    Loads each player's best score, ignoring malformed records.
-    */
-    public HashMap<String, Integer> loadScores() {
+    /**
+     * Loads each player's best score, ignoring malformed records.
+     * @return each player and their best saved score
+     */
+    private HashMap<String, Integer> loadScores() {
         HashMap<String, Integer> scores = new HashMap<>();
 
         // Open the score file and close it automatically after reading.
@@ -373,13 +400,13 @@ public class TreasureHunt {
                         if (!name.isEmpty()) {
                             scores.merge(name, score, Math::min);
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException exception) {
                         // Skip records whose score is not a valid integer.
                         continue;
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException exception) {
             // Start with no scores if the file does not exist.
             return scores;
         }
@@ -387,10 +414,11 @@ public class TreasureHunt {
         return scores;
     }
 
-    /*
-    Saves a winning step count, keeping each player's best score.
-    */
-    public void saveScore(String name) {
+    /**
+     * Saves a winning step count, keeping each player's best score.
+     * @param name winner name
+     */
+    private void saveScore(String name) {
         HashMap<String, Integer> scores = loadScores();
         scores.merge(name, this.steps, Math::min);
 
@@ -402,16 +430,16 @@ public class TreasureHunt {
             }
 
             System.out.println("Score saved!");
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException exception) {
             // Tell the player if the score file cannot be written.
             System.out.println("Unable to save score.");
         }
     }
 
-    /*
-    Displays previous winners from fewest steps to most steps.
-    */
-    public void displayScores() {
+    /**
+     * Displays previous winners from fewest steps to most steps.
+     */
+    private void displayScores() {
         HashMap<String, Integer> scores = loadScores();
 
         System.out.println("\n--- Previous Winners ---");
@@ -433,9 +461,10 @@ public class TreasureHunt {
         }
     }
 
-    /*
-    Runs a game, reveals its final board, and saves a winning score.
-    */
+    /**
+     * Runs a game, reveals its final board, and saves a winning score.
+     * @param input source of player input
+     */
     public void startGame(Scanner input) {
         displayScores();
 
