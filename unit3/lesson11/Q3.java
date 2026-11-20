@@ -1,7 +1,7 @@
 /*
 Author: Dinesh Sinnathamby
 Date: November 12th, 2026
-Description: Tests breadth-first search on the directed graph with vertices A to H.
+Description: Tests breadth-first search on the graph with vertices A to H.
 */
 
 public class Q3 {
