@@ -29,7 +29,6 @@ public class Q3 extends JPanel {
         y2[lineCount] = (int)(Math.random() * getHeight());
         lineCount++;
 
-        // Redraw the saved lines because super.paintComponent(g) clears the panel.
         for (int i = 0; i < lineCount; i++) {
             g.drawLine(x1[i], y1[i], x2[i], y2[i]);
         }
@@ -38,7 +37,6 @@ public class Q3 extends JPanel {
         repaint();
     }
 
-    // The drawing runs very quickly, uses processing time, and floods the console.
     public static void main(String[] args) {
 
         JFrame window = new JFrame("Screensaver");

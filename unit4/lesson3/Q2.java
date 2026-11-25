@@ -40,10 +40,7 @@ public class Q2 extends JPanel implements ActionListener {
             resultLabel.setText(String.format("Temperature in Celsius: %.2f °C", celsius));
 
         } catch (NumberFormatException exception) {
-            JOptionPane.showMessageDialog(this,
-                "Please enter a valid number and try again.",
-                "Invalid Temperature", JOptionPane.WARNING_MESSAGE);
-
+            JOptionPane.showMessageDialog(this, "Please enter a valid number and try again.", "Invalid Temperature", JOptionPane.WARNING_MESSAGE);
             temperatureField.selectAll();
             temperatureField.requestFocusInWindow();
         }
